@@ -3,7 +3,7 @@ import { Schema, model } from 'mongoose';
 const _schema = new Schema(
   {
     username: {
-      type: Number,
+      type: String,
       required:true,
       index: true
     },
@@ -32,4 +32,4 @@ const _schema = new Schema(
   }
 );
 
-export default model('user', _schema);
+export default model('User', _schema);

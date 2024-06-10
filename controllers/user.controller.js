@@ -1,6 +1,8 @@
-import {response} from '../utils/commonResponse.js';
+import bcrypt from 'bcrypt';
+import {response,authenticationResponse} from '../utils/commonResponse.js';
 import MESSAGES from '../utils/commonMessage.js';
-
+import {generateToken} from '../utils/jwt.js';
+import User from '../models/user.model.js';
 
 /*
     ==>user registration api
@@ -10,39 +12,32 @@ import MESSAGES from '../utils/commonMessage.js';
         3.)User creation
         4.)Token generation
 */
-export const signUp = async()=>{
+export const signUp = async(req,res)=>{
   try{  
     let body=req.body;
-        
-    const isUserExit = await User.findOne({mobile:body.mobile,status:true});
+    const isUserExit = await User.findOne({email:body.email,status:true});
     if(isUserExit){
-        return res.json(await apiresponse(false, MESSAGES.USER_ALREADY_EXIT,401));
+        return res.status(401).json(await response(false, MESSAGES.USER_ALREADY_EXIT));
     }
     let hashedPassword = await bcrypt.hash(body.password, 10);
     const bodyData = {
         username:body.username,
         password:hashedPassword,
-        mobile:body.mobile,
-        optionalMob:body.optionalMob,
-        name:body.name,
-        school:body.school,
-        userType:body.userType,
+        email:body.email
     };
-
     const account = await User.create(bodyData);
     const jwtToken = generateToken({
         id: account._id,
-        userType: account.userType,
-        mobile: account.mobile
+        email: account.email
     });
-    return res.send(
-        await authenticationResponse(true, MESSAGES.USER_SIGNUP_COMPLETE, {}, {
-          accessToken: jwtToken,
-          userName: account.name ? account.name : "",
-          userId: account._id,
-          userType:account.userType
-        })
+    return res.status(401).json(
+      await authenticationResponse(true, MESSAGES.USER_SIGNUP_COMPLETE, {}, {
+        accessToken: jwtToken,
+        userName: account.username ? account.username : "",
+        userId: account._id
+      })
     );
+    
   }catch(error){
     return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
   }
@@ -52,30 +47,29 @@ export const login = async (req, res,next)=>{
   try{
       let body=req.body;
       
-      const isUserExit = await User.findOne({username:body.username,mobile:body.mobile,status:true});
+      const isUserExit = await User.findOne({email:body.email,status:true});
       if(!isUserExit){
-          return res.json(await apiresponse(false, MESSAGES.NO_USER_FOUND,401));
+          return res.status(401).json(await response(false, MESSAGES.NO_USER_FOUND_WITHGIVEN_CRED,401));
       }
   
       let matchedPassword = await bcrypt.compare(body.password, isUserExit.password);
       if(!matchedPassword){
-          return res.json(await authenticationResponse(false, MESSAGES.INVALID_CRED, {}));
+          return res.status(401).json(
+            await authenticationResponse(true, MESSAGES.INVALID_CRED, {})
+          );
       }
       const jwtToken = generateToken({
           id: isUserExit._id,
-          userType: isUserExit.userType,
-          mobile: isUserExit.mobile
+          email: isUserExit.email
       });
-      return res.send(
-          await authenticationResponse(true, MESSAGES.LOGIN_SUCCESS, {}, {
-            accessToken: jwtToken,
-            userName: isUserExit.name ? isUserExit.name : "",
-            userId: isUserExit._id,
-            userType:isUserExit.userType
-          })
+      return res.status(401).json(
+        await authenticationResponse(true, MESSAGES.LOGIN_SUCCESS, {}, {
+          accessToken: jwtToken,
+          userName: isUserExit.username ? isUserExit.username : "",
+          userId: isUserExit._id
+        })
       );
   }catch(error){
-      console.log(error);
-      return res.status(500).json(await apiresponse(false, MESSAGES.SOMETHING_WRONG));
+    return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
   }
 }

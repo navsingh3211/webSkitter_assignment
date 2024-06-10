@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from'cors';
 import cluster from 'node:cluster';
 import os from 'os';
 import process from 'node:process';
@@ -21,6 +22,8 @@ if (cluster.isPrimary) {
   const app = express();
 
   dotenv.config("");
+  app.use(express.json());
+  app.use(cors());
 
 
   const port=process.env.PORT
