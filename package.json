@@ -1,0 +1,28 @@
+{
+  "name": "webskitter_assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type":"module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node server.js",
+    "dev":"nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/navsingh3211/webSkitter_assignment.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/navsingh3211/webSkitter_assignment/issues"
+  },
+  "homepage": "https://github.com/navsingh3211/webSkitter_assignment#readme",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1"
+  }
+}
