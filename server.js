@@ -4,6 +4,7 @@ import cors from'cors';
 import cluster from 'node:cluster';
 import os from 'os';
 import process from 'node:process';
+import { rateLimit } from 'express-rate-limit'
 import database from './database.js';
 import routes from './routes/index.js';
 import {
@@ -29,11 +30,25 @@ if (cluster.isPrimary) {
   app.use(express.json());
   app.use(cors());
 
-
   const port=process.env.PORT
   const mongoUrl = process.env.MONGO_URL;
   const app_version = process.env.APP_VERSION;
+
   database(mongoUrl);
+
+  const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 1 minutes
+    limit: 10, // Limit each IP to 10 requests per `window` (here, per 15 minutes).
+    standardHeaders: true,
+    legacyHeaders: false,
+    message:async (req, res) => {
+        return 'You can only make 10 requests every hour.'
+    },
+  });
+  
+  // Apply the rate limiting middleware to all requests.
+  app.use(limiter)
+
   app.use(`/api/${app_version}`,routes());
   app.use(notFound);
   app.use(appErrorHandler);
