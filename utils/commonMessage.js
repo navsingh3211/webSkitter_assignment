@@ -11,7 +11,11 @@ const MESSAGES = {
   USER_EDIT:'User has been edited successfully.',
   CREATED_CAT:'Category has been created successfully.',
   CAT_FOUND:'Category lsiting',
-  CAT_NOT_FOUND:'No category found!'
+  CAT_NOT_FOUND:'No category found!',
+  CATEGORY_INVALID:'One or more categories are invalid',
+  QUESTION_CREATED:'Question added successfully',
+  NO_QUESTION_FOUND_BY_CAT:'No question found by given category id.',
+  QUESTION_FOUND:'Question found!'
 }
 
 export default MESSAGES;

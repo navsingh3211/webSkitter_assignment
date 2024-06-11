@@ -6,7 +6,11 @@ import os from 'os';
 import process from 'node:process';
 import database from './database.js';
 import routes from './routes/index.js';
-import {notFound} from './middlewares/error.middlewares.js';
+import {
+  notFound,
+  appErrorHandler,
+  genericErrorHandler
+} from './middlewares/error.middlewares.js';
 
 
 let totalCpu = os.cpus().length;
@@ -32,7 +36,8 @@ if (cluster.isPrimary) {
   database(mongoUrl);
   app.use(`/api/${app_version}`,routes());
   app.use(notFound);
-
+  app.use(appErrorHandler);
+  app.use(genericErrorHandler);
 
   const server = app.listen(port,()=>{
     console.log(`Our app is listing on port ${port}`);

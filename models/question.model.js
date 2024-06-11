@@ -2,10 +2,12 @@ import { Schema, model } from 'mongoose';
 
 const _schema = new Schema(
   {
-    text: { type: String, required: true },
+    question: {
+       type: String, required: true 
+    },
     options: [
       { 
-        text: String, 
+        option: String, 
         isCorrect: Boolean 
       }
     ],
