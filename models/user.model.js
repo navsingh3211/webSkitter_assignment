@@ -15,11 +15,14 @@ const _schema = new Schema(
     password:{
       type: String,
       required:true,
-      index: true
+      select:false
     },
     profilePicPath: {
       type: String,
       default:''
+    },
+    timezone: {
+      type: String, required: true
     },
     status: {
       type: Boolean,

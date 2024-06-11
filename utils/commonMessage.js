@@ -5,7 +5,9 @@ const MESSAGES = {
   NO_USER_FOUND:'No user found!',
   INVALID_CRED:'Invalid creadential!',
   LOGIN_SUCCESS:'Login success!',
-  NO_USER_FOUND_WITHGIVEN_CRED:"No user found with given credebtails!"
+  NO_USER_FOUND_WITHGIVEN_CRED:"No user found with given credebtails!",
+  INVALID_TOKEN:'Unautherized user!',
+  USER_FOUND:'User found.'
 }
 
 export default MESSAGES;

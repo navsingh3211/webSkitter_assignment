@@ -43,7 +43,7 @@ export const signUp = async(req,res)=>{
   }
 }
 
-export const login = async (req, res,next)=>{
+export const login = async (req, res)=>{
   try{
       let body=req.body;
       
@@ -69,6 +69,28 @@ export const login = async (req, res,next)=>{
           userId: isUserExit._id
         })
       );
+  }catch(error){
+    return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
+  }
+}
+
+export const viewUserProfile = async(req,res)=>{
+  try{
+    const userId = req.authData.data.id;
+    
+    const userData = await User.findOne({_id:userId});
+    if(!userData){
+        return res.status(401).json(await response(false, MESSAGES.NO_USER_FOUND_WITHGIVEN_CRED,401));
+    }
+    return res.status(200).json(await response(true, MESSAGES.USER_FOUND,userData));
+  }catch(error){
+    return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
+  }
+}
+
+export const editProfile = async(req,res)=>{
+  try{
+
   }catch(error){
     return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
   }
