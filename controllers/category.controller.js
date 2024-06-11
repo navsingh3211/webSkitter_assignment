@@ -2,10 +2,17 @@
 import {response} from '../utils/commonResponse.js';
 import MESSAGES from '../utils/commonMessage.js';
 import Category from '../models/category.model.js';
+import {createCategoryValidation} from '../utils/dataValidation.js';
 
 export const createCategory = async(req,res)=>{
   try{  
     let body=req.body;
+
+    /*Payload validation*/
+    const validatePayload = createCategoryValidation.safeParse(body);
+    if(!validatePayload.success){
+      return res.status(411).json(await response(false, validatePayload.error.errors[0].message));
+    }
     
     await Category.create({name:body.name});
     

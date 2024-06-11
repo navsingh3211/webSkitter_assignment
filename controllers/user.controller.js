@@ -3,6 +3,7 @@ import {response,authenticationResponse} from '../utils/commonResponse.js';
 import MESSAGES from '../utils/commonMessage.js';
 import {generateToken} from '../utils/jwt.js';
 import User from '../models/user.model.js';
+import {createRegisterUserValidation} from '../utils/dataValidation.js';
 
 /*
     ==>user registration api
@@ -15,6 +16,12 @@ import User from '../models/user.model.js';
 export const signUp = async(req,res)=>{
   try{  
     let body=req.body;
+    /*Payload validation*/
+    const validatePayload = createRegisterUserValidation.safeParse(body);
+    if(!validatePayload.success){
+      return res.status(411).json(await response(false, validatePayload.error.errors[0].message));
+    }
+
     const isUserExit = await User.findOne({email:body.email,status:true});
     if(isUserExit){
         return res.status(401).json(await response(false, MESSAGES.USER_ALREADY_EXIT));

@@ -6,9 +6,16 @@ import Question from '../models/question.model.js';
 import fs from 'fs';
 import { join,dirname } from 'path';
 import xlsxFile from 'read-excel-file/node';
+import {createQuestionValidation} from '../utils/dataValidation.js';
 
 export const createQuestion = async(req,res)=>{
   try{  
+    /*Payload validation*/
+    const validatePayload = createQuestionValidation.safeParse(req.body);
+    if(!validatePayload.success){
+      return res.status(411).json(await response(false, validatePayload.error.errors[0].message));
+    }
+
     let {question,options,categories}=req.body;
     const categoryDocs = await Category.find({ _id: { $in: categories } });
     if (categoryDocs.length !== categories.length) {
@@ -82,7 +89,7 @@ export const addQuestionInBulk = async(req,res)=>{
                   let CategoryName = element['Categories'];
                   let categoryIdByName = await Category.findOne({name:CategoryName})
 
-                  letquestionCreated = await Question.create({ 
+                  let questionCreated = await Question.create({ 
                     question:question,
                     options:option,
                     categories:[categoryIdByName._id]
@@ -122,6 +129,7 @@ export const addQuestionInBulk = async(req,res)=>{
         }
     }
   }catch(error){
+    console.log(error);
     return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
   }
 }

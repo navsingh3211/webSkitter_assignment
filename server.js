@@ -42,7 +42,7 @@ if (cluster.isPrimary) {
     standardHeaders: true,
     legacyHeaders: false,
     message:async (req, res) => {
-        return 'You can only make 10 requests every hour.'
+        return 'You can only make 10 requests every minute.'
     },
   });
   

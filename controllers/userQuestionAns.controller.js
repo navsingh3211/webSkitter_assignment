@@ -1,14 +1,19 @@
 import mongoose from 'mongoose';
 import {response} from '../utils/commonResponse.js';
 import MESSAGES from '../utils/commonMessage.js';
-import Question from '../models/question.model.js';
 import UserAnswer from '../models/userAnswer.model.js';
+import {submitAnswerValidation} from '../utils/dataValidation.js';
 
 export const submitAnswerAgainstQues = async(req,res)=>{
   try{  
     const userId = req.authData.data.id;
     let body=req.body;
-   
+
+    /*Payload validation*/
+    const validatePayload = submitAnswerValidation.safeParse(body);
+    if(!validatePayload.success){
+      return res.status(411).json(await response(false, validatePayload.error.errors[0].message));
+    }
     const payloadData = {
       userId:userId,
       question:body.question,
