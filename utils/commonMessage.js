@@ -8,7 +8,10 @@ const MESSAGES = {
   NO_USER_FOUND_WITHGIVEN_CRED:"No user found with given credebtails!",
   INVALID_TOKEN:'Unautherized user!',
   USER_FOUND:'User found.',
-  USER_EDIT:'User has been edited successfully.'
+  USER_EDIT:'User has been edited successfully.',
+  CREATED_CAT:'Category has been created successfully.',
+  CAT_FOUND:'Category lsiting',
+  CAT_NOT_FOUND:'No category found!'
 }
 
 export default MESSAGES;
