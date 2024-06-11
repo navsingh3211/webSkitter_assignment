@@ -6,6 +6,7 @@ import {
   viewUserProfile,
   editProfile
 } from '../controllers/user.controller.js';
+import picUpload from '../config/multerConfig.js';
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.get(
   '/view-user-profile',[validateToken],viewUserProfile
 );
 router.post(
-  '/edit-user',[validateToken],editProfile
+  '/edit-user',validateToken,picUpload.single('profilePic'),editProfile
 );
 
 export default router;

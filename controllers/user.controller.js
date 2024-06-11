@@ -23,7 +23,8 @@ export const signUp = async(req,res)=>{
     const bodyData = {
         username:body.username,
         password:hashedPassword,
-        email:body.email
+        email:body.email,
+        timezone:"Asia/Kolkata"
     };
     const account = await User.create(bodyData);
     const jwtToken = generateToken({
@@ -62,6 +63,7 @@ export const login = async (req, res)=>{
           id: isUserExit._id,
           email: isUserExit.email
       });
+      console.log(matchedPassword,'matchedPassword')
       return res.status(401).json(
         await authenticationResponse(true, MESSAGES.LOGIN_SUCCESS, {}, {
           accessToken: jwtToken,
@@ -78,7 +80,7 @@ export const viewUserProfile = async(req,res)=>{
   try{
     const userId = req.authData.data.id;
     
-    const userData = await User.findOne({_id:userId});
+    const userData = await User.findOne({_id:userId},{password:0});
     if(!userData){
         return res.status(401).json(await response(false, MESSAGES.NO_USER_FOUND_WITHGIVEN_CRED,401));
     }
@@ -90,7 +92,25 @@ export const viewUserProfile = async(req,res)=>{
 
 export const editProfile = async(req,res)=>{
   try{
-
+    const userId = req.authData.data.id;
+    const {email,username} = req.body;
+    const profilePicture = req.file;
+    let path;
+    if(profilePicture){
+      path=profilePicture.path;
+    }
+    let dataToUpdate = {
+      username:username,
+      email:email,
+      profilePicPath:path
+    }
+    await User.updateOne(
+      { _id: userId },
+      {
+          $set: dataToUpdate
+      }
+    );
+    return res.status(200).json(await response(true, MESSAGES.USER_EDIT,null));
   }catch(error){
     return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
   }
