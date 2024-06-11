@@ -21,6 +21,7 @@
   "homepage": "https://github.com/navsingh3211/webSkitter_assignment#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "exceljs": "^4.4.0",

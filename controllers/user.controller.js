@@ -70,7 +70,8 @@ export const login = async (req, res)=>{
           id: isUserExit._id,
           email: isUserExit.email
       });
-      console.log(matchedPassword,'matchedPassword')
+      res.cookie("token", jwtToken);
+      // console.log(matchedPassword,'matchedPassword')
       return res.status(401).json(
         await authenticationResponse(true, MESSAGES.LOGIN_SUCCESS, {}, {
           accessToken: jwtToken,
