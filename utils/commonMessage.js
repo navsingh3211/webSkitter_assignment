@@ -16,7 +16,9 @@ const MESSAGES = {
   QUESTION_CREATED:'Question added successfully',
   NO_QUESTION_FOUND_BY_CAT:'No question found by given category id.',
   QUESTION_FOUND:'Question found!',
-  ANSWER_SUBMIT:'Answer has been submitted successfully.'
+  ANSWER_SUBMIT:'Answer has been submitted successfully.',
+  ANSWER_NOT_FOUND:'No answer found!',
+  ANSWER_FOUND:'Answer found!'
 }
 
 export default MESSAGES;

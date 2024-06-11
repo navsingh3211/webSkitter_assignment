@@ -1,7 +1,7 @@
-
+import mongoose from 'mongoose';
 import {response} from '../utils/commonResponse.js';
 import MESSAGES from '../utils/commonMessage.js';
-import Category from '../models/category.model.js';
+import Question from '../models/question.model.js';
 import UserAnswer from '../models/userAnswer.model.js';
 
 export const submitAnswerAgainstQues = async(req,res)=>{
@@ -23,16 +23,54 @@ export const submitAnswerAgainstQues = async(req,res)=>{
   }
 }
 
-// export const categoryListing = async(req,res)=>{
-//   try{  
-    
-//     const categoryListing = await Category.find();
-//     if(categoryListing){
-//       return res.status(200).json(await response(true, MESSAGES.CAT_FOUND,categoryListing));
-//     }else{
-//       return res.status(200).json(await response(true, MESSAGES.CAT_NOT_FOUND,null));
-//     }
-//   }catch(error){
-//     return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
-//   }
-// }
+export const searchQuestionByAnswer = async(req,res)=>{
+  try{  
+    const userId = req.authData.data.id;
+    const answer = req.query.answer;
+    const questionListing = await UserAnswer.aggregate([
+      {
+        $match:{
+          userId:new mongoose.Types.ObjectId(userId),
+          selectedOption:answer
+        }
+      },
+      {
+        $lookup:{
+          from:"questions",
+          localField:"question",
+          foreignField:"_id",
+          as:"questionDetails"
+        }
+      },
+      {
+        $unwind:"$questionDetails"
+      },
+      {
+        $lookup:{
+          from:"users",
+          localField:"userId",
+          foreignField:"_id",
+          as:"userDetails"
+        }
+      },
+      {
+        $unwind:"$userDetails"
+      },
+      {
+        $project:{
+          questionName:"$questionDetails.question",
+          answerSelected:"$selectedOption",
+          submittedAt:1,
+          userName:"$userDetails.username"
+        }
+      }
+    ]);
+    if(questionListing){
+      return res.status(200).json(await response(true, MESSAGES.ANSWER_FOUND,questionListing));
+    }else{
+      return res.status(200).json(await response(true, MESSAGES.ANSWER_NOT_FOUND,null));
+    }
+  }catch(error){
+    return res.status(500).json(await response(false, MESSAGES.GENERAL_ERROR, error));
+  }
+}

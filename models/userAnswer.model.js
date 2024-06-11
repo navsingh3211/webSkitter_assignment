@@ -13,8 +13,7 @@ const _schema = new Schema(
       required: true 
     },
     selectedOption: { 
-      text: String, 
-      isCorrect: Boolean 
+      type: String
     },
     submittedAt: { type: Date, default: Date.now }
   },
