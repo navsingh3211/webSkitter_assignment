@@ -6,6 +6,7 @@ import os from 'os';
 import process from 'node:process';
 import cookieParser from "cookie-parser";
 import { rateLimit } from 'express-rate-limit'
+import morgan from 'morgan';
 import database from './database.js';
 import routes from './routes/index.js';
 import {
@@ -26,7 +27,7 @@ if (cluster.isPrimary) {
   });
 } else {
   const app = express();
-
+  app.use(morgan('dev'));
   dotenv.config("");
   app.use(cookieParser());
   app.use(express.json());
@@ -34,6 +35,13 @@ if (cluster.isPrimary) {
     credentials: true,
     origin: process.env.FRONTEND_URL
   }));
+
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Methods", "POST, PUT, OPTIONS, DELETE, GET");
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    next();
+  });
 
   const port=process.env.PORT
   const mongoUrl = process.env.MONGO_URL;
