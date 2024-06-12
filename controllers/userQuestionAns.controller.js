@@ -32,11 +32,15 @@ export const searchQuestionByAnswer = async(req,res)=>{
   try{  
     const userId = req.authData.data.id;
     const answer = req.query.answer;
+
+    if(!answer){
+      return res.status(200).json(await response(false, 'Please enter the answer.', null));
+    }
+
     const questionListing = await UserAnswer.aggregate([
       {
         $match:{
-          userId:new mongoose.Types.ObjectId(userId),
-          selectedOption:answer
+          userId:new mongoose.Types.ObjectId(userId)
         }
       },
       {
@@ -62,6 +66,13 @@ export const searchQuestionByAnswer = async(req,res)=>{
         $unwind:"$userDetails"
       },
       {
+        $match: {
+            $or: [
+                { 'selectedOption': { $regex: answer, $options: 'i' } }, // Search in selectedOption field
+            ]
+        }
+      },
+      {
         $project:{
           questionName:"$questionDetails.question",
           answerSelected:"$selectedOption",
@@ -70,7 +81,7 @@ export const searchQuestionByAnswer = async(req,res)=>{
         }
       }
     ]);
-    if(questionListing){
+    if(questionListing.length>1){
       return res.status(200).json(await response(true, MESSAGES.ANSWER_FOUND,questionListing));
     }else{
       return res.status(200).json(await response(true, MESSAGES.ANSWER_NOT_FOUND,null));
